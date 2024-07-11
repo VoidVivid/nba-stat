@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import Navbar from './Components/Navbar/Navbar'
+import Player from './Components/Player/player'
 
 const App = () => {
 
@@ -12,9 +13,10 @@ const App = () => {
 
   return (
     <div className={`container ${theme}`}>
-      <Navbar theme={theme} setTheme={setTheme}/>
+      <Navbar theme={theme} setTheme={setTheme} />
     </div>
   )
+
 }
 
 export default App
