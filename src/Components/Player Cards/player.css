@@ -2,8 +2,20 @@
     margin-top: 20px;
 }
 .player-stats{
-    background-color: #4A525A;
+    background-color: #22b322;
     margin-left: 50px;
+}
+.flex-container{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 40px;
+}
+.flex-containers{
+    margin-left: 1.2em;
+    margin-right: 1.2em;
+    font-size: 22px;
+    margin-top: 15px;
 }
 .PTS{
     text-decoration: underline;
