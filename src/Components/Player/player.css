@@ -4,25 +4,37 @@
 .player-stats{
     background-color: #22b322;
     margin-left: 50px;
+    width: 25%;
+    border-radius: 7px;
+    color: rgb(255, 249, 249);
+    padding-top: 20px;
+    padding-bottom: 20px;
+    height: 20rem;
+}
+.big-forehead{
+    height: auto;
+    width: 50%;
+    padding: 5px;
+    margin-bottom: 25px;
 }
 .flex-container{
     display: flex;
     justify-content: space-between;
     align-items: center;
-    gap: 40px;
 }
 .flex-containers{
+    display: flex;
+    justify-content: space-between;     
     margin-left: 1.2em;
     margin-right: 1.2em;
-    font-size: 22px;
+    font-size: 20px;
     margin-top: 15px;
+    align-items: center;
+    
 }
 .PTS{
     text-decoration: underline;
-}
-.REB{
-    text-decoration: underline;
-}
-.AST{
-    text-decoration: underline;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
 }

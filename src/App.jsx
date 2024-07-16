@@ -14,9 +14,9 @@ const App = () => {
   return (
     <div className={`container ${theme}`}>
       <Navbar theme={theme} setTheme={setTheme} />
+      <Player className='section'/>
     </div>
   )
-
 
 }
 
