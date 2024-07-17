@@ -1,0 +1,16 @@
+
+.player-statss{
+    background-color: #06a9f4;
+    margin-left: 50px;
+    width: 25%;
+    border-radius: 7px;
+    color: rgb(255, 249, 249);
+    padding-top: 20px;
+    padding-bottom: 20px;
+    height: 20rem;
+}
+.flex-containers{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}

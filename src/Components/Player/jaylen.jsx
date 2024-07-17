@@ -1,5 +1,5 @@
 import React from 'react'
-import './player.css'
+import './jaylen.css'
 
 const player = () => {
   return (

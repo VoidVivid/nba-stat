@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import Navbar from './Components/Navbar/Navbar'
-import Player from './Components/Player/player'
+import Jaylen from './Components/Player/jaylen'
+import Luka from './Components/Player/luka'
 
 const App = () => {
 
@@ -14,7 +15,9 @@ const App = () => {
   return (
     <div className={`container ${theme}`}>
       <Navbar theme={theme} setTheme={setTheme} />
-      <Player className='section'/>
+      <h2 style={{color: "white", marginLeft: "5.5  em", marginTop: 30, textDecoration: "underline"}}>TOP PLAYERS</h2>
+      <Jaylen className='section'/>
+      <Luka/>
     </div>
   )
 
