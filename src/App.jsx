@@ -15,7 +15,7 @@ const App = () => {
   return (
     <div className={`container ${theme}`}>
       <Navbar theme={theme} setTheme={setTheme} />
-      <h2 style={{color: "white", marginLeft: "5.5  em", marginTop: 30, textDecoration: "underline"}}>TOP PLAYERS</h2>
+      <h2 style={{color: "white", marginLeft: "5.5em", marginTop: 30, textDecoration: "underline"}}>TOP PLAYERS</h2>
       <Jaylen className='section'/>
       <Luka/>
     </div>

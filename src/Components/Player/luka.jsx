@@ -15,15 +15,15 @@ const luka = () => {
           <div className='flex-containers' style={{marginLeft: "1.2em", marginRight: "1.2em", fontSize: 22, marginTop: 15}}>
             <div>
               <p style={{textDecoration: "underline"}}><b>PTS</b></p>
-              <p><b>20.8</b></p>
+              <p><b>29.2</b></p>
             </div>
             <div>
               <p style={{textDecoration: "underline"}}><b>REB</b></p>
-              <p><b>5.4</b></p>
+              <p><b>8.8</b></p>
             </div>
             <div>
               <p style={{textDecoration: "underline"}}><b>AST</b></p>
-              <p><b>5.0</b></p>
+              <p><b>5.6</b></p>
             </div>
           </div>
         </div>
