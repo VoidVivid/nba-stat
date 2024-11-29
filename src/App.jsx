@@ -21,13 +21,13 @@ const App = () => {
 
     // This is async, meaning it will not run on the main thread. Calling the API takes some time so its going to run kind of like in the background
     const fetchData = async () => {
-      const id = 1200; // this is the ID of the player we want
+      const id = 10; // this is the ID of the player we want
       const url = "https://api.balldontlie.io/v1/players/" + id; // URL we're fetching from the API
       const options = {
         method: "GET", // GET = reading, POST = adding data (a database), PUT = updating data (a database), DELETE = removing data (a databaes)
         headers: {
           // headers are like options or variables we can pass in
-          "Authorization": import.meta.env.VITE_API_KEY
+          "Authorization": import.meta.env.VITE_PUBLIC_NBA_API_KEY
         },
       };
 
