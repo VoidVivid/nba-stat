@@ -3,6 +3,7 @@ import Navbar from "./Components/Navbar/Navbar";
 import Jaylen from "./Components/Player/jaylen";
 import Luka from "./Components/Player/luka";
 import Eastern from "./Components/Standings/eastern";
+import { createClient } from "@supabase/supabase-js";
 
 const App = () => {
   const current_theme = localStorage.getItem("current_theme"); // localStorage saves data to the browser's localStorage database
@@ -17,32 +18,49 @@ const App = () => {
 
   // I only want this to run 1 time, when the page is first loaded, so I keep the dependency array empty
   useEffect(() => {
-    // Call the API
+    const supabase = createClient(
+      "https://zupqzccspymmcpwndpbx.supabase.co",
+      import.meta.env.VITE_PUBLIC_SUPA_API_KEY
+    );
 
-    // This is async, meaning it will not run on the main thread. Calling the API takes some time so its going to run kind of like in the background
-    const fetchData = async () => {
-      const id = 10; // this is the ID of the player we want
-      const url = "https://api.balldontlie.io/v1/players/" + id; // URL we're fetching from the API
+    // This function handles fetching the next set of players
+    const fetchNextPage = async (cursor) => {
+      const url = `https://api.balldontlie.io/v1/players?per_page=100&cursor=${cursor}`;
+
       const options = {
-        method: "GET", // GET = reading, POST = adding data (a database), PUT = updating data (a database), DELETE = removing data (a databaes)
+        method: "GET",
         headers: {
-          // headers are like options or variables we can pass in
-          "Authorization": import.meta.env.VITE_PUBLIC_NBA_API_KEY
+          Authorization: import.meta.env.VITE_PUBLIC_NBA_API_KEY,
         },
       };
 
       try {
-        const response = await fetch(url, options); // javascript's default function for fetching APIs
-        const result = await response.text(); // convert the API response into text
-        console.log(result); // output it to the browser's console
+        const response = await fetch(url, options);
+        const result = await response.json();
+
+        // Upsert player data into Supabase table (assuming this part already works)
+        const { error } = await supabase
+          .from("player_data")
+          .upsert(result.data, { onConflict: ["id"] });
+
+        if (error) {
+          console.error("Error upserting data: ", error);
+        }
+
+        // Check for next_cursor and continue fetching next pages if it exists
+        if (result.meta && result.meta.next_cursor) {
+          fetchNextPage(result.meta.next_cursor); // Recursively fetch the next page
+        }
       } catch (error) {
-        // if we have an error when executing the thing in the try block, we go here
-        console.error(error); // outputs the error to the brwoser console
+        console.error("Error fetching next page of data: ", error);
       }
     };
 
-    fetchData();
-  }, []); // empty dependency array
+    // Start fetching from the cursor of the last page you fetched (e.g., cursor = 100)
+    const lastCursor = 100; // Change this to the actual cursor value from the previous API response
+    fetchNextPage(lastCursor); // Call the function to start fetching the next page
+  }, []); // Empty dependency array so it runs only once after initial render
+  // empty dependency array
 
   return (
     <div className={`container ${theme}`}>
