@@ -1,0 +1,25 @@
+{
+  "data": {
+    "id": 10,
+    "first_name": "Al-Farouq",
+    "last_name": "Aminu",
+    "position": "F",
+    "height": "6-8",
+    "weight": "220",
+    "jersey_number": "5",
+    "college": "Wake Forest",
+    "country": "USA",
+    "draft_year": 2010,
+    "draft_round": 1,
+    "draft_number": 8,
+    "team": {
+      "id": 25,
+      "conference": "West",
+      "division": "Northwest",
+      "city": "Portland",
+      "name": "Trail Blazers",
+      "full_name": "Portland Trail Blazers",
+      "abbreviation": "POR"
+    }
+  }
+}
