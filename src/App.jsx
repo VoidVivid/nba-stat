@@ -3,67 +3,88 @@ import Navbar from "./Components/Navbar/Navbar";
 import Jaylen from "./Components/Player/jaylen";
 import Luka from "./Components/Player/luka";
 import Eastern from "./Components/Standings/eastern";
-import { createClient } from "@supabase/supabase-js";
+import PlayerStats from "./Components/PlayerStats/PlayerStats.jsx";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
 
 const App = () => {
-  const current_theme = localStorage.getItem("current_theme"); // localStorage saves data to the browser's localStorage database
-  const [theme, setTheme] = useState(current_theme ? current_theme : "light");
+  // Get the current theme from localStorage, default to "light" if not set
+  const current_theme = localStorage.getItem("current_theme");
+  const [theme, setTheme] = useState(current_theme || "light");
 
-  // useState: It allows you to store data (like a variable) but when you change the state it changes also in the browser everywhere in real time
-  const [data, setData] = useState([]); // Init to empty array because initially we won't have data
+  // Store fetched player data and API error in states
+  const [playerData, setPlayerData] = useState([]);
+  const [fetchError, setFetchError] = useState(null);
 
-  // This code runs: 1.) When the page is first loaded, 2.) Anytime the value inside the dependency changes, it will run
+  // Sync theme changes with localStorage
   useEffect(() => {
     localStorage.setItem("current_theme", theme);
-  }, [theme]); // Anything in [] is called the dependency of the useEffect
+  }, [theme]);
 
-  // I only want this to run 1 time, when the page is first loaded, so I keep the dependency array empty
+  // Fetch NBA player data when the app first loads
   useEffect(() => {
-    // Call the API
-    const supabase = createClient(
-      "https://zupqzccspymmcpwndpbx.supabase.co",
-      import.meta.env.VITE_PUBLIC_SUPA_API_KEY
-    );
-    // This is async, meaning it will not run on the main thread. Calling the API takes some time so its going to run kind of like in the background
-    const fetchData = async () => {
-      const url = "https://api.balldontlie.io/v1/players"; //  URL we're fetching from the API
+    const fetchNBAPlayers = async () => {
+      const url = "https://api.balldontlie.io/v1/players";
       const options = {
-        method: "GET", // GET = reading, POST = adding data (a database), PUT = updating data (a database), DELETE = removing data (a databaes)
+        method: "GET",
         headers: {
-          // headers are like options or variables we can pass in
           Authorization: import.meta.env.VITE_PUBLIC_NBA_API_KEY,
         },
       };
 
       try {
-        const response = await fetch(url, options); // javascript's default function for fetching APIs
-        const result = await response.json(); // convert the API response into text
-        console.log(result);
+        const response = await fetch(url, options);
+        const result = await response.json();
+
+        if (!response.ok) {
+          throw new Error(result.message || "Failed to fetch player data");
+        }
+
+        setPlayerData(result.data);
       } catch (error) {
-        console.error("Error fetching next page of data: ", error);
+        setFetchError(error.message);
+        console.error("Error fetching NBA player data:", error);
       }
     };
 
-    fetchData();
+    fetchNBAPlayers();
   }, []);
 
   return (
-    <div className={`container ${theme}`}>
-      <Navbar theme={theme} setTheme={setTheme} />
-      <h2
-        style={{
-          color: "gray",
-          marginLeft: "5.5em",
-          marginTop: 30,
-          textDecoration: "underline",
-        }}
-      >
-        TOP PLAYERS
-      </h2>
-      <Jaylen className="section" />
-      <Luka />
-      <Eastern />
-    </div>
+    <BrowserRouter>
+      <div className={`container ${theme}`}>
+        {/* Navbar with theme control */}
+        <Navbar theme={theme} setTheme={setTheme} />
+
+        {/* Display any API fetch error */}
+        {fetchError && (
+          <div style={{ color: "red", textAlign: "center", marginTop: "1em" }}>
+            <p>Error: {fetchError}</p>
+          </div>
+        )}
+
+        {/* Static heading */}
+        <h2
+          style={{
+            color: "gray",
+            marginLeft: "5.5em",
+            marginTop: 30,
+            textDecoration: "underline",
+          }}
+        >
+          TOP PLAYERS
+        </h2>
+
+        {/* Define routes for navigation */}
+        <Routes>
+          <Route path="/player-stats/:id" element={<PlayerStats />} />
+        </Routes>
+
+        {/* Static components */}
+        <Jaylen />
+        <Luka />
+        <Eastern />
+      </div>
+    </BrowserRouter>
   );
 };
 

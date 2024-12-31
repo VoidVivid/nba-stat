@@ -1,138 +1,137 @@
-import React, { useState } from "react";
-import "./Navbar.css";
-import logo_light from "../../assets/logo-black.png"; // Light theme logo
-import logo_dark from "../../assets/logo-white.png"; // Dark theme logo
-import toggle_dark from "../../assets/day.png"; // Light mode icon for theme toggle
-import toggle_light from "../../assets/night.png"; // Dark mode icon for theme toggle
-import search_icon_light from "../../assets/search-w.png"; // Light theme search icon
-import search_icon_dark from "../../assets/search-b.png"; // Dark theme search icon
-import { createClient } from "@supabase/supabase-js"; // Supabase client for data fetching
+import React, { useState } from "react"; // Import React and useState for state management
+import "./Navbar.css"; // Import the CSS file for styling
+import logo_light from "../../assets/logo-black.png"; // Import light theme logo
+import logo_dark from "../../assets/logo-white.png"; // Import dark theme logo
+import toggle_dark from "../../assets/day.png"; // Import light mode toggle icon
+import toggle_light from "../../assets/night.png"; // Import dark mode toggle icon
+import search_icon_light from "../../assets/search-w.png"; // Import search icon for light theme
+import search_icon_dark from "../../assets/search-b.png"; // Import search icon for dark theme
+import { createClient } from "@supabase/supabase-js"; // Import Supabase client to interact with the database
+import { useNavigate } from "react-router-dom"; // Import useNavigate for navigation between pages
 
-// Initialize Supabase client with your project URL and API key
+// Initialize Supabase client
 const supabase = createClient(
-  "https://zupqzccspymmcpwndpbx.supabase.co",
-  import.meta.env.VITE_PUBLIC_SUPA_API_KEY
+  "https://zupqzccspymmcpwndpbx.supabase.co", // Supabase project URL
+  import.meta.env.VITE_PUBLIC_SUPA_API_KEY // Supabase API key from environment variables for security
 );
 
 const Navbar = ({ theme, setTheme }) => {
-  // State hooks to handle search term and filtered player results
-  const [searchTerm, setSearchTerm] = useState(""); // Holds the current search term
-  const [filteredPlayers, setFilteredPlayers] = useState([]); // Holds the list of filtered players
+  const [searchTerm, setSearchTerm] = useState(""); // State to store the search term entered by the user
+  const [filteredPlayers, setFilteredPlayers] = useState([]); // State to store filtered player search results
+  const navigate = useNavigate(); // Hook for programmatic navigation
 
   // Function to toggle between light and dark themes
   const toggle_mode = () => {
     theme === "light" ? setTheme("dark") : setTheme("light");
   };
 
-  // Function to fetch player data based on search term
+  // Fetch player data based on the search term
   const fetchPlayer = async () => {
-    const trimmedSearchTerm = searchTerm.trim(); // Remove extra spaces from the search term
+    const trimmedSearchTerm = searchTerm.trim(); // Trim whitespace from the search term
     if (!trimmedSearchTerm) {
-      console.log("No search term entered."); // If no search term is entered, log it
+      alert("Please enter a player's name!"); // Show an alert if the search term is empty
       return;
     }
 
-    // Split the search term into first and last name (if applicable)
-    const names = trimmedSearchTerm.split(" ");
-    const firstName = names[0];
-    const lastName = names[1] || ""; // If there's no last name, assign an empty string
+    const names = trimmedSearchTerm.split(" "); // Split the search term into first and last name (if present)
+    const firstName = names[0]; // First name is the first word in the search term
+    const lastName = names[1] || ""; // Last name is the second word or empty if not provided
 
     try {
-      // Construct the query to search the database for player data
-      let query = supabase.from("player_data").select("*");
+      let query = supabase.from("player_data").select("*"); // Start a query to fetch all players from the database
 
-      // If there's a last name, search by first and last names
       if (lastName) {
+        // If both first and last names are provided, search for both
         query = query
-          .ilike("first_name", `%${firstName}%`) // Case-insensitive match for first name
-          .ilike("last_name", `%${lastName}%`); // Case-insensitive match for last name
+          .ilike("first_name", `%${firstName}%`) // Case-insensitive search for first name
+          .ilike("last_name", `%${lastName}%`); // Case-insensitive search for last name
       } else {
-        // If no last name, search by first name or last name
+        // If only one name is provided, search for it in both first and last name fields
         query = query.or(
           `first_name.ilike.%${firstName}%,last_name.ilike.%${firstName}%`
         );
       }
 
-      // Execute the query and get the result
-      const { data, error } = await query;
+      const { data, error } = await query; // Execute the query
 
-      // Check for any errors during the query
       if (error) {
-        console.error("Error fetching player:", error.message);
+        console.error("Error fetching player:", error.message); // Log the error if one occurs
         return;
       }
 
-      console.log("Fetched player data:", data); // Log fetched data for debugging
-
       if (data.length === 0) {
-        console.log("No player found for the search term."); // Log if no player data is found
+        // If no players are found, show an alert and clear the results
+        alert("No player found!");
+        setFilteredPlayers([]);
+        return;
       }
 
-      // Update the filteredPlayers state with the fetched player data
-      setFilteredPlayers(data); // Set the filtered players list with the query results
+      setFilteredPlayers(data); // Update the state with the search results
     } catch (error) {
-      // Catch and log any errors during the fetch process
-      console.error("Error fetching player:", error.message);
+      console.error("Error fetching player:", error.message); // Log any errors
     }
   };
 
-  // Function to handle the search action (when user presses Enter or clicks the search icon)
-  const handleSearch = async () => {
-    if (searchTerm.trim()) {
-      await fetchPlayer(); // Fetch players if the search term is not empty
-    } else {
-      alert("Please enter a player name!"); // Alert user if no search term is entered
-    }
+  // Navigate to the player's stats page when a player is clicked
+  const handlePlayerClick = (playerId) => {
+    console.log("Player ID:", playerId);
+    const url = `/player-stats/${Number(playerId)}`;
+    console.log("Navigating to URL:", url);
+    navigate(url);
   };
 
   return (
     <div className="navbar">
-      {/* Display the logo based on the theme */}
+      {/* Logo changes based on the current theme */}
       <img
         src={theme === "light" ? logo_light : logo_dark}
         alt="Logo"
         className="logo"
       />
-      {/* Navigation links */}
+      {/* Static navigation links */}
       <ul>
         <li>Home</li>
         <li>About</li>
       </ul>
 
-      {/* Search bar and icon */}
+      {/* Search box for player search */}
       <div className="search-box">
         <input
           type="text"
-          placeholder="Search"
-          value={searchTerm} // Bind input value to searchTerm state
-          onChange={(e) => setSearchTerm(e.target.value)} // Update searchTerm state when user types
+          placeholder="Search" // Placeholder text for the search box
+          value={searchTerm} // Controlled input bound to searchTerm state
+          onChange={(e) => setSearchTerm(e.target.value)} // Update state when input value changes
           onKeyDown={(e) => {
             if (e.key === "Enter") {
-              fetchPlayer(); // Trigger search when Enter key is pressed
+              fetchPlayer(); // Fetch player data when the user presses Enter
             }
           }}
         />
+        {/* Search icon changes based on theme and triggers fetchPlayer on click */}
         <img
-          src={theme === "light" ? search_icon_light : search_icon_dark} // Set search icon based on theme
+          src={theme === "light" ? search_icon_light : search_icon_dark}
           alt="Search"
-          onClick={fetchPlayer} // Trigger fetchPlayer function when search icon is clicked
+          onClick={fetchPlayer}
         />
       </div>
 
-      {/* Toggle button to switch between light and dark themes */}
+      {/* Theme toggle button changes the theme on click */}
       <img
-        onClick={() => toggle_mode()} // Call toggle_mode function when the theme toggle button is clicked
-        src={theme === "light" ? toggle_light : toggle_dark} // Set theme toggle icon based on current theme
+        onClick={toggle_mode}
+        src={theme === "light" ? toggle_light : toggle_dark}
         alt="Toggle Theme"
         className="toggle-icon"
       />
 
-      {/* Conditionally render search results if available */}
+      {/* Conditionally render search results if there are any */}
       {filteredPlayers.length > 0 && (
         <div className="search-results">
-          {/* Map through the filtered players and display each player's name */}
           {filteredPlayers.map((player) => (
-            <div key={player.id} className="search-result-item">
+            <div
+              key={player.id}
+              className="search-result-item"
+              onClick={() => handlePlayerClick(player.id)}
+            >
               <span>
                 {player.first_name} {player.last_name}
               </span>
@@ -144,4 +143,4 @@ const Navbar = ({ theme, setTheme }) => {
   );
 };
 
-export default Navbar;
+export default Navbar; // Export the Navbar component for use in other parts of the app
