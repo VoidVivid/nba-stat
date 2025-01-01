@@ -1,6 +1,7 @@
 import { useParams } from "react-router-dom"; // Import useParams to access dynamic route parameters
 import { useEffect, useState } from "react"; // Import React hooks: useEffect for side effects and useState for state management
 import { createClient } from "@supabase/supabase-js"; // Import Supabase client to interact with the database
+import Navbar from "../Navbar/Navbar";
 
 // Create a Supabase client instance using the Supabase URL and API key
 const supabase = createClient(
@@ -14,6 +15,13 @@ function PlayerStats() {
   const numericId = parseInt(id, 10); // Convert the 'id' to an integer (base 10) to ensure it's a valid number
   const [player_data, setPlayer_data] = useState(null); // State to hold the fetched player data
   const [error, setError] = useState(null); // State to hold any errors encountered during fetching
+
+  const current_theme = localStorage.getItem("current_theme");
+  const [theme, setTheme] = useState(current_theme || "light");
+
+  useEffect(() => {
+    localStorage.setItem("current_theme", theme);
+  }, [theme]);
 
   // useEffect is used to fetch player data when the component mounts or when numericId changes
   useEffect(() => {
@@ -50,7 +58,8 @@ function PlayerStats() {
 
   // Render the player's data once it's loaded
   return (
-    <div>
+    <div className={`container ${theme}`}>
+      <Navbar theme={theme} setTheme={setTheme} />
       <h1>
         {player_data.first_name} {player_data.last_name}{" "}
         {/* Display the player's full name */}

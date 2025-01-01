@@ -90,8 +90,27 @@ const Navbar = ({ theme, setTheme }) => {
       />
       {/* Static navigation links */}
       <ul>
-        <li>Home</li>
-        <li>About</li>
+        <li>
+          <a
+            href="/"
+            style={{
+              textDecoration: "none",
+              color: theme === "light" ? "#0d0d0d" : "#ffffff", // Adjust these colors as needed
+            }}
+          >
+            Home
+          </a>
+        </li>
+        <li>
+          <a
+            style={{
+              textDecoration: "none",
+              color: theme === "light" ? "#0d0d0d" : "#ffffff", // Adjust these colors as needed
+            }}
+          >
+            About
+          </a>
+        </li>
       </ul>
 
       {/* Search box for player search */}
